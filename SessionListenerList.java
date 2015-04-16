@@ -28,20 +28,36 @@ public class SessionListenerList {
 		return new SessionListenerList(wagon);
 	}
 	
-	public void fireSessionOpening(int eventType) {
-		fireSessionOpening(new SessionEvent(wagon, eventType));
+	protected void fireSessionOpening() {
+		listeners.fire("sessionOpening", new SessionEvent(wagon, SessionEvent.SESSION_OPENING));
 	}
 	
-	public void fireSessionOpening(SessionEvent event) {
-		listeners.fire("sessionOpening", event);
-	}
-	
-	public void fireSessionOpening(Exception exception) {
-		fireSessionOpening(new SessionEvent(wagon, exception));
+
+	public void fireSessionDisconnected() {
+		listeners.fire("sessionDisconnected", new SessionEvent(this.wagon, SessionEvent.SESSION_DISCONNECTED));
 	}
 	
 	public boolean contains(SessionListener listener) {
 		return listeners.contains(listener);
 	}
-
+	
+	public void fireSessionOpened() {
+		listeners.fire("sessionOpened", new SessionEvent(this.wagon, SessionEvent.SESSION_OPENED));
+	}
+	
+	public void fireSessionLoggedIn() {
+		listeners.fire("sessionLoggedIn", new SessionEvent(this.wagon, SessionEvent.SESSION_LOGGED_IN));
+	}
+	
+	public void fireSessionLoggedOff() {
+		listeners.fire("sessionLoggedOff", new SessionEvent(this.wagon, SessionEvent.SESSION_LOGGED_OFF));
+	}
+	
+	public void fireSessionConnectionRefused() {
+		listeners.fire("sessionConnectionRefused", new SessionEvent(this.wagon, SessionEvent.SESSION_CONNECTION_REFUSED));
+	}
+	
+	public void fireSessionDisconnecting() {
+		listeners.fire("sessionDisconnecting", new SessionEvent(this.wagon, SessionEvent.SESSION_DISCONNECTING));
+	}
 }
