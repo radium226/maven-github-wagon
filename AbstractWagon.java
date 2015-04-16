@@ -37,6 +37,7 @@ public abstract class AbstractWagon implements Wagon {
 	
 	@Override
 	public void addSessionListener(SessionListener sessionListener) {
+		System.out.println("addSessionListener(" + sessionListener + ")");
 		sessionListeners.add(sessionListener);
 	}
 
@@ -52,22 +53,23 @@ public abstract class AbstractWagon implements Wagon {
 
 	@Override
 	public void connect(Repository repository, ProxyInfo proxyInfo) throws ConnectionException, AuthenticationException {
-		connect(repository, Optional.<AuthenticationInfo>absent(), Optional.of(proxyInfo));
+		connect(repository, Optional.<AuthenticationInfo>absent(), Optional.fromNullable(proxyInfo));
 	}
 
 	@Override
 	public void connect(Repository repository, ProxyInfoProvider proxyInfoProvider) throws ConnectionException, AuthenticationException {
-		connect(repository, Optional.<AuthenticationInfo>absent(), Optional.<ProxyInfo>fromNullable(proxyInfoProvider.getProxyInfo("http")));
+		Optional<ProxyInfo> proxyInfo = Optional.fromNullable(proxyInfoProvider == null ? null : proxyInfoProvider.getProxyInfo("http"));
+		connect(repository, Optional.<AuthenticationInfo>absent(), proxyInfo);
 	}
 
 	@Override
 	public void connect(Repository repository, AuthenticationInfo authenticationInfo) throws ConnectionException, AuthenticationException {
-		connect(repository, Optional.of(authenticationInfo), Optional.<ProxyInfo>absent());
+		connect(repository, Optional.fromNullable(authenticationInfo), Optional.<ProxyInfo>absent());
 	}
 
 	@Override
 	public void connect(Repository repository, AuthenticationInfo authenticationInfo, ProxyInfo proxyInfo) throws ConnectionException, AuthenticationException {
-		connect(repository, Optional.of(authenticationInfo), Optional.of(proxyInfo));
+		connect(repository, Optional.fromNullable(authenticationInfo), Optional.fromNullable(proxyInfo));
 	}
 	
 	public void connect(Repository repository, Optional<AuthenticationInfo> authenticationInfo, Optional<ProxyInfo> proxyInfo) throws ConnectionException, AuthenticationException {
@@ -77,14 +79,45 @@ public abstract class AbstractWagon implements Wagon {
 
 	@Override
 	public void connect(Repository repository, AuthenticationInfo authenticationInfo, ProxyInfoProvider proxyInfoProvider) throws ConnectionException, AuthenticationException {
-		connect(repository, Optional.of(authenticationInfo), Optional.fromNullable(proxyInfoProvider.getProxyInfo("http")));
+		System.out.println(" =====> proxyInfoProvider = " + proxyInfoProvider);
+		Optional<ProxyInfo> proxyInfo = Optional.fromNullable(proxyInfoProvider == null ? null : proxyInfoProvider.getProxyInfo("http"));
+		connect(repository, Optional.fromNullable(authenticationInfo), proxyInfo);
 	}
 	
-	public abstract void connect(Optional<AuthenticationInfo> authenticationInfo, Optional<ProxyInfo> proxyInfo);
+	public void connect(Optional<AuthenticationInfo> authenticationInfo, Optional<ProxyInfo> proxyInfo) throws ConnectionException, AuthenticationException {
+		sessionListeners.fireSessionOpening();
+		try {
+			doConnect(authenticationInfo, proxyInfo);
+			sessionListeners.fireSessionLoggedIn();
+			sessionListeners.fireSessionOpened();
+		} catch (AuthenticationException e) {
+			sessionListeners.fireSessionConnectionRefused();
+			throw e;
+		} catch (ConnectionException e) {
+			sessionListeners.fireSessionConnectionRefused();
+			throw e;
+		}
+	}
+	
+	protected abstract void doConnect(Optional<AuthenticationInfo> authenticationInfo, Optional<ProxyInfo> proxyInfo) throws ConnectionException, AuthenticationException;
 
 	@Override
-	public abstract void disconnect() throws ConnectionException;
+	public void disconnect() throws ConnectionException {
+		sessionListeners.fireSessionDisconnecting();
+		try {
+			doDisconnect();
+			sessionListeners.fireSessionLoggedOff();
+			sessionListeners.fireSessionDisconnected();
+		} catch (ConnectionException e) {
+			sessionListeners.fireSessionConnectionRefused();
+			throw e;
+		}
+		
+		
+	}
 
+	public abstract void doDisconnect() throws ConnectionException;
+	
 	@Override
 	public abstract void get(String arg0, File arg1) throws TransferFailedException, ResourceDoesNotExistException, AuthorizationException;
 
@@ -126,7 +159,7 @@ public abstract class AbstractWagon implements Wagon {
 
 	@Override
 	public void openConnection() throws ConnectionException, AuthenticationException {
-		connect(Optional.<AuthenticationInfo>absent(), Optional.<ProxyInfo>absent());
+		//connect(Optional.<AuthenticationInfo>absent(), Optional.<ProxyInfo>absent());
 	}
 
 	@Override
@@ -155,12 +188,12 @@ public abstract class AbstractWagon implements Wagon {
 
 	@Override
 	public void setReadTimeout(int readTimeout) {
-		this.readTimeout = Optional.of(readTimeout);
+		this.readTimeout = Optional.fromNullable(readTimeout);
 	}
 
 	@Override
 	public void setTimeout(int timeout) {
-		this.timeout = Optional.of(timeout);
+		this.timeout = Optional.fromNullable(timeout);
 	}
 
 	@Override
