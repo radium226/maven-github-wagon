@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component-set>
+  <components>
+    <component>
+      <role>org.apache.maven.wagon.Wagon</role>
+      <role-hint>github</role-hint>
+      <implementation>com.github.radium.github.AssetWagon</implementation>
+      <instantiation-strategy>per-lookup</instantiation-strategy>
+      <description />
+      <isolated-realm>false</isolated-realm>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.plugin.LegacySupport</role>
+          <role-hint />
+          <field-name>legacySupport</field-name>
+        </requirement>
+      </requirements>
+    </component>
+  </components>
+</component-set>
