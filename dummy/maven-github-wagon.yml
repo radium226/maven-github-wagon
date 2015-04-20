@@ -1,0 +1,5 @@
+--- 
+-
+  github_repository: radium226/executable
+  maven_dependency: "radium:executable:1.0"
+  tag_name_pattern: "executable-%{version}"

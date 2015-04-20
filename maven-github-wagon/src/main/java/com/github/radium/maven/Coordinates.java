@@ -110,13 +110,13 @@ public class Coordinates {
         String artifactID = directoryNames.get(directoryCount - 2);
         String groupID = Joiner.on(".").join(directoryNames.subList(0, directoryCount - 2));
         String packaging = fileExtension;
-        String classifier = fileNameWithoutExtension.substring(artifactID.length() + 1 + version.length());
-        if (!Strings.isNullOrEmpty(classifier)) {
-            classifier = classifier.substring(1);
-        } else {
-            classifier = null;
-        }
-
+//        String classifier = fileNameWithoutExtension.substring(artifactID.length() + 1 + version.length());
+//        if (!Strings.isNullOrEmpty(classifier)) {
+//            classifier = classifier.substring(1);
+//        } else {
+//            classifier = null;
+//        }
+        String classifier = null; 
         return new Coordinates(groupID, artifactID, packaging, classifier, version);
     }
 

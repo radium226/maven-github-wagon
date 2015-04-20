@@ -1,20 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings>
-	<proxies>
-		<proxy>
-			<protocol>http</protocol>
-			<host>10.94.13.241</host>
-			<port>8080</port>
-			<username>885055</username>
-			<password>$Test004</password>
-			<nonProxyHosts></nonProxyHosts>
-		</proxy>
-	</proxies>
 	<servers>
 		<server>
 			<id>github</id>
 			<username>radium226</username>
-			<password>G6pmHQHC6N</password>
+			<password>oauth2_token:c3f98760b49bd31b48c50edc741b6bfca2c56499</password>
 		</server>
 	</servers>
 </settings>
