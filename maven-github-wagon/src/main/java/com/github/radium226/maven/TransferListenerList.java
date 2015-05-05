@@ -1,4 +1,4 @@
-package com.github.radium.maven;
+package com.github.radium226.maven;
 
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.events.SessionEvent;
@@ -18,6 +18,7 @@ public class TransferListenerList {
 	}
 	
 	public boolean add(TransferListener listener) {
+            System.out.println("#############################################################");
 		return listeners.add(listener);
 	}
 	

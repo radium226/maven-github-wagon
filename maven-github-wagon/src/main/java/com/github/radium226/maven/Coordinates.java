@@ -1,4 +1,4 @@
-package com.github.radium.maven;
+package com.github.radium226.maven;
 
 import java.io.File;
 import java.util.List;

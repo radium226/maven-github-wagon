@@ -1,4 +1,4 @@
-package com.github.radium.maven;
+package com.github.radium226.maven;
 
 import com.google.common.base.Function;
 import java.io.File;
@@ -24,6 +24,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.LegacySupport;
 
 public abstract class AbstractWagon implements Wagon {
 
@@ -35,14 +36,21 @@ public abstract class AbstractWagon implements Wagon {
     private Optional<Integer> timeout;
     private Repository repository;
 
+    /*@Requirement
+    private MavenSession session;*/
+    
     @Requirement
-    private MavenSession session;
+    private LegacySupport legacySupport;
 
     protected AbstractWagon() {
         super();
 
         this.sessionListeners = SessionListenerList.create(this);
         this.transferListeners = TransferListenerList.create(this);
+    }
+    
+    protected TransferListenerList getTransferListeners() {
+        return transferListeners;
     }
 
     @Override
@@ -57,44 +65,36 @@ public abstract class AbstractWagon implements Wagon {
 
     @Override
     public void connect(Repository repository) throws ConnectionException, AuthenticationException {
-        System.out.println("connect(Repository repository)");
         connect(repository, Optional.<AuthenticationInfo>absent());
     }
 
     @Override
     public void connect(Repository repository, ProxyInfo proxyInfo) throws ConnectionException, AuthenticationException {
-        System.out.println("connect(Repository repository, ProxyInfo proxyInfo)");
         connect(repository, Optional.<AuthenticationInfo>absent());
     }
 
     @Override
     public void connect(Repository repository, ProxyInfoProvider proxyInfoProvider) throws ConnectionException, AuthenticationException {
-        System.out.println("connect(Repository repository, ProxyInfoProvider proxyInfoProvider)");
         connect(repository, Optional.<AuthenticationInfo>absent());
     }
 
     @Override
     public void connect(Repository repository, AuthenticationInfo authenticationInfo) throws ConnectionException, AuthenticationException {
-        System.out.println("connect(Repository repository, AuthenticationInfo authenticationInfo)");
         connect(repository, Optional.fromNullable(authenticationInfo));
     }
 
     @Override
     public void connect(Repository repository, AuthenticationInfo authenticationInfo, ProxyInfo proxyInfo) throws ConnectionException, AuthenticationException {
-        System.out.println("connect(Repository repository, AuthenticationInfo authenticationInfo, ProxyInfo proxyInfo)");
         connect(repository, Optional.fromNullable(authenticationInfo));
     }
 
     public void connect(Repository repository, Optional<AuthenticationInfo> authenticationInfo) throws ConnectionException, AuthenticationException {
-        System.out.println("connect(Repository repository, Optional<AuthenticationInfo> authenticationInfo, Optional<ProxyInfo> proxyInfo)");
         this.repository = repository;
         connect(authenticationInfo);
     }
 
     @Override
     public void connect(Repository repository, AuthenticationInfo authenticationInfo, ProxyInfoProvider proxyInfoProvider) throws ConnectionException, AuthenticationException {
-        System.out.println("connect(Repository repository, AuthenticationInfo authenticationInfo, ProxyInfoProvider proxyInfoProvider)");
-        System.out.println(" =====> proxyInfoProvider = " + proxyInfoProvider);
         Optional<ProxyInfo> proxyInfo = Optional.fromNullable(proxyInfoProvider == null ? null : proxyInfoProvider.getProxyInfo("github"));
         connect(repository, Optional.fromNullable(authenticationInfo));
     }
@@ -105,10 +105,7 @@ public abstract class AbstractWagon implements Wagon {
             doConnect(authenticationInfo);
             sessionListeners.fireSessionLoggedIn();
             sessionListeners.fireSessionOpened();
-        } catch (AuthenticationException e) {
-            sessionListeners.fireSessionConnectionRefused();
-            throw e;
-        } catch (ConnectionException e) {
+        } catch (AuthenticationException | ConnectionException e) {
             sessionListeners.fireSessionConnectionRefused();
             throw e;
         }
@@ -215,7 +212,7 @@ public abstract class AbstractWagon implements Wagon {
     public abstract boolean supportsDirectoryCopy();
 
     public List<Proxy> getProxies() {
-        return session.getSettings().getProxies();
+        return getSession().getSettings().getProxies();
     }
 
     public List<ProxyInfo> getProxyInfos() {
@@ -263,7 +260,7 @@ public abstract class AbstractWagon implements Wagon {
     }
     
     public MavenSession getSession() {
-        return session;
+        return legacySupport.getSession();
     }
 
 }

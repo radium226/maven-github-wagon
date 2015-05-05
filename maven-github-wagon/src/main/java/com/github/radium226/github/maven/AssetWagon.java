@@ -1,5 +1,6 @@
-package com.github.radium.github.wagon;
+package com.github.radium226.github.maven;
 
+import com.github.radium226.common.Pair;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,10 +35,9 @@ import org.kohsuke.github.extras.OkHttpConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.radium.maven.AbstractWagon;
-import com.github.radium.maven.Coordinates;
-import com.github.radium.maven.MetaDataDownloader;
-import com.github.radium.maven.ProxyInfos;
+import com.github.radium226.maven.AbstractWagon;
+import com.github.radium226.maven.Coordinates;
+import com.github.radium226.maven.ProxyInfos;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
@@ -52,7 +52,11 @@ import com.squareup.okhttp.OkUrlFactory;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.logging.Level;
 import org.apache.maven.wagon.proxy.ProxyInfo;
+import org.kohsuke.github.GHContent;
+import org.kohsuke.github.GHTag;
 import org.yaml.snakeyaml.Yaml;
 
 @Component(role = Wagon.class, hint = "github", instantiationStrategy = "per-lookup")
@@ -60,7 +64,7 @@ public class AssetWagon extends AbstractWagon {
 
     final private static Logger LOGGER = LoggerFactory.getLogger(AssetWagon.class);
 
-    private GitHubHelper gitHubHelper;
+    private GitHubService gitHubService;
     private GitHub gitHub;
     private OkHttpClient okHttpClient;
     
@@ -78,15 +82,8 @@ public class AssetWagon extends AbstractWagon {
         this.coucou = coucou;   
     }
     
-    public File getConfigFile() {
-        File folder = getSession().getProjects().get(0).getBasedir();
-        File configFile = new File(folder, "maven-github-wagon.yml");
-        return configFile.exists() ? configFile : null; 
-    }
-
     @Override
     public void doConnect(Optional<AuthenticationInfo> authenticationInfo) throws ConnectionException {
-        System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$ configFile = " + getConfigFile());
         try {
             // GitHub Authentication
             GitHubBuilder gitHubBuilder = new GitHubBuilder();
@@ -130,9 +127,7 @@ public class AssetWagon extends AbstractWagon {
                     .withConnector(new OkHttpConnector(new OkUrlFactory(okHttpClient)))
                 .build();
             
-            gitHubHelper = GitHubHelper.forGitHub(gitHub)
-                    .withUrl(getRepository().getUrl())
-                    .withConfigFile(getConfigFile())
+            this.gitHubService = GitHubService.forGitHub(gitHub)
                     .withHttpClient(okHttpClient);
 
             GHMyself myself = gitHub.getMyself();
@@ -150,39 +145,19 @@ public class AssetWagon extends AbstractWagon {
 
     @Override
     public void get(String resourceName, File resourceFile) throws TransferFailedException, ResourceDoesNotExistException, AuthorizationException {
-        resourceFile.getParentFile().mkdirs();
-        if (resourceName.contains("guava")) {
-            throw new ResourceDoesNotExistException("Fuckit");
+        if (!resourceName.startsWith("com/github/")) {
+            throw new ResourceDoesNotExistException("There is no " + resourceName + " on GitHub");
         }
-        if (resourceName.endsWith("maven-metadata.xml")) {
-            try (FileOutputStream resourceFileOutputStream = new FileOutputStream(resourceFile)) {
-                MetaDataDownloader metaDataDownloader = new MetaDataDownloader(gitHubHelper);
-                InputStream metaDataInputStream = metaDataDownloader.download(resourceName);
-                ByteStreams.copy(metaDataInputStream, resourceFileOutputStream);
-            } catch (IOException e) {
-                throw new TransferFailedException("Hey hey hye! ", e);
-            }
-        } else {
-            try {
-                String url = gitHubHelper.findResourceURL(resourceName);
-                if (url == null) {
-                    throw new ResourceDoesNotExistException("Sorry... ");
-                }
-
-                Request request = new Request.Builder()
-                        .url(url)
-                    .build();
-                Response response = okHttpClient.newCall(request).execute();
-                InputStream bodyInputStream = response.body().byteStream();
-                try (FileOutputStream resourceFileOutputStream = new FileOutputStream(resourceFile)) {
-                    ByteStreams.copy(bodyInputStream, resourceFileOutputStream);
-                }
-            } catch (IOException e) {
-                throw new TransferFailedException("Sorry... ", e);
-            }
+        
+        try (InputStream inputStream = Downloaders.of(resourceName).with(this.gitHubService).download(resourceName)) {
+            resourceFile.getParentFile().mkdirs();
+            
+            ByteStreams.copy(inputStream, new FileOutputStream(resourceFile));
+        } catch (IOException e) {
+            throw new TransferFailedException("Unable to copy resource", e);
         }
     }
-
+    
     @Override
     public List<String> getFileList(String arg0) throws TransferFailedException, ResourceDoesNotExistException, AuthorizationException {
         System.out.println(" -----> getFileList(" + arg0 + ")");
@@ -210,12 +185,13 @@ public class AssetWagon extends AbstractWagon {
     @Override
     public boolean resourceExists(String resourceName) throws TransferFailedException, AuthorizationException {
         System.out.println(" ---------> resourceExists(" + resourceName + ")");
-        try {
-            String url = gitHubHelper.findResourceURL(resourceName);
-            return url != null;
-        } catch (IOException e) {
-            throw new TransferFailedException("Sorry... ", e);
-        }
+//        try {
+//            String url = null; //this.gitHubService.findResourceURL(resourceName);
+//            return url != null;
+//        } catch (IOException e) {
+//            throw new TransferFailedException("Sorry... ", e);
+//        }
+        return false;
     }
 
     @Override

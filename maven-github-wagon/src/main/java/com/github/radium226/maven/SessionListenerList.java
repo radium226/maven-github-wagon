@@ -1,4 +1,4 @@
-package com.github.radium.maven;
+package com.github.radium226.maven;
 
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.events.SessionEvent;

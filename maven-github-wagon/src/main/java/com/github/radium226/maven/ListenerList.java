@@ -1,4 +1,4 @@
-package com.github.radium.maven;
+package com.github.radium226.maven;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

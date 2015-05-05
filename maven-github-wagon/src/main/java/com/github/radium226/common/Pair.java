@@ -1,5 +1,6 @@
-package com.github.radium.common;
+package com.github.radium226.common;
 
+import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
@@ -48,6 +49,14 @@ public class Pair<F, S> {
                 .add("first", this.first)
                 .add("second", this.second)
             .toString();
+    }
+    
+    public <T> Pair<F, T> mapSecond(Function<S, T> function) {
+        return Pair.of(this.first, function.apply(this.second));
+    }
+    
+    public <T> Pair<T, S> mapFirst(Function<F, T> function) {
+        return Pair.of(function.apply(this.first), this.second);
     }
     
 }
