@@ -32,13 +32,12 @@ public class ListenableFileOutputStream extends FileOutputStream {
     @Override
     public void write(byte buffer[], int offset, int length) throws IOException {
         super.write(buffer, offset, length);
-        if (offset == 0) {
-            this.listeners.fireBytesWritten(buffer, buffer.length);
-        } else {
+        if (offset != 0) {
             byte[] smallerBuffer = new byte[length];
             System.arraycopy(buffer, offset, smallerBuffer, 0, length);
-            this.listeners.fireBytesWritten(smallerBuffer, length);
+            buffer = smallerBuffer;
         }
+        this.listeners.fireBytesWritten(buffer, buffer.length);
     }
 
     public void addListener(FileOutputStreamListener listener) {
