@@ -1,5 +1,7 @@
 package com.github.radium226.maven;
 
+import com.github.radium226.io.FileOutputStreamListener;
+import com.github.radium226.io.ListenableFileOutputStream;
 import com.google.common.base.Function;
 import java.io.File;
 import java.util.List;
@@ -23,13 +25,21 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.io.ByteStreams;
+import java.io.IOException;
+import java.io.InputStream;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.LegacySupport;
+import org.apache.maven.wagon.events.TransferEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractWagon implements Wagon {
 
     private SessionListenerList sessionListeners;
     private TransferListenerList transferListeners;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractWagon.class);
 
     private boolean interactive;
     private Optional<Integer> readTimeout;
@@ -37,8 +47,7 @@ public abstract class AbstractWagon implements Wagon {
     private Repository repository;
 
     /*@Requirement
-    private MavenSession session;*/
-    
+     private MavenSession session;*/
     @Requirement
     private LegacySupport legacySupport;
 
@@ -48,7 +57,7 @@ public abstract class AbstractWagon implements Wagon {
         this.sessionListeners = SessionListenerList.create(this);
         this.transferListeners = TransferListenerList.create(this);
     }
-    
+
     protected TransferListenerList getTransferListeners() {
         return transferListeners;
     }
@@ -130,7 +139,25 @@ public abstract class AbstractWagon implements Wagon {
     public abstract void doDisconnect() throws ConnectionException;
 
     @Override
-    public abstract void get(String arg0, File arg1) throws TransferFailedException, ResourceDoesNotExistException, AuthorizationException;
+    public void get(String resourceName, File resourceFile) throws TransferFailedException, ResourceDoesNotExistException, AuthorizationException {
+        transferListeners.fireTransferInitiated(resourceName, TransferEvent.REQUEST_GET);
+        try (
+                ListenableFileOutputStream fileOutputStream = new ListenableFileOutputStream(resourceFile);
+                InputStream resouceInputStream = doGet(resourceName);) {
+            resourceFile.getParentFile().mkdirs();
+            transferListeners.fireTransferStarted(resourceName, TransferEvent.REQUEST_GET);
+            fileOutputStream.addListener((File file, byte[] buffer, int length) -> {
+                transferListeners.fireTransferProgress(resourceName, TransferEvent.REQUEST_GET, buffer, length);
+            });
+            ByteStreams.copy(resouceInputStream, fileOutputStream);
+            transferListeners.fireTransferCompleted(resourceName, TransferEvent.REQUEST_GET);
+        } catch (IOException e) {
+            transferListeners.fireTransferError(resourceName, TransferEvent.REQUEST_GET);
+            LOGGER.debug("Unable to transfer resource {}", resourceName, e);
+        }
+    }
+
+    protected abstract InputStream doGet(String resourceName) throws TransferFailedException, ResourceDoesNotExistException, AuthorizationException;
 
     @Override
     public abstract List<String> getFileList(String arg0) throws TransferFailedException, ResourceDoesNotExistException, AuthorizationException;
@@ -191,9 +218,6 @@ public abstract class AbstractWagon implements Wagon {
     }
 
     @Override
-    public abstract boolean resourceExists(String arg0) throws TransferFailedException, AuthorizationException;
-
-    @Override
     public void setInteractive(boolean interactive) {
         this.interactive = interactive;
     }
@@ -233,7 +257,7 @@ public abstract class AbstractWagon implements Wagon {
             public boolean apply(ProxyInfo proxyInfo) {
                 return proxyInfo.getType().equals(type);
             }
-            
+
         }), null);
     }
 
@@ -258,9 +282,21 @@ public abstract class AbstractWagon implements Wagon {
 
         }), null);
     }
-    
+
     public MavenSession getSession() {
         return legacySupport.getSession();
+    }
+
+    @Override
+    public boolean resourceExists(String resourceName) throws TransferFailedException, AuthorizationException {
+        boolean exists;
+        try {
+            doGet(resourceName);
+            exists = true;
+        } catch (ResourceDoesNotExistException e) {
+            exists = false;
+        }
+        return exists;
     }
 
 }

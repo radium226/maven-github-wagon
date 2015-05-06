@@ -2,7 +2,6 @@ package com.github.radium226.github.maven;
 
 import com.github.radium226.common.Ok;
 import com.github.radium226.common.Pair;
-import com.github.radium226.maven.Coordinates;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -37,7 +36,7 @@ public class GitHubService {
     public static GitHubService forGitHub(GitHub gitHub) {
         return new GitHubService(gitHub);
     }
-    
+
     public GitHubService withHttpClient(OkHttpClient httpClient) {
         this.httpClient = httpClient;
         return this;
@@ -51,17 +50,19 @@ public class GitHubService {
             throw new TransferFailedException("Lol", e);
         }
     }
-    
+
     public Pair<GHRepository, Optional<GHTag>> findRepositoryAndTag(String groupID, String artifactID, Optional<String> version) throws TransferFailedException {
-        Pair<GHRepository, Optional<GHTag>> repositoryAndTag = null; 
+        Pair<GHRepository, Optional<GHTag>> repositoryAndTag = null;
         if (version.isPresent()) {
-            repositoryAndTag = findRepositoryAndTag(groupID, artifactID, version.get()).mapSecond((GHTag tag) -> { return Optional.of(tag); });
+            repositoryAndTag = findRepositoryAndTag(groupID, artifactID, version.get()).mapSecond((GHTag tag) -> {
+                return Optional.of(tag);
+            });
         } else {
             repositoryAndTag = Pair.of(findRepository(groupID, artifactID), Optional.absent());
         }
         return repositoryAndTag;
     }
-    
+
     public Pair<GHRepository, GHTag> findRepositoryAndTag(String groupID, String artifactID, String version) throws TransferFailedException {
         try {
             GHRepository repository = findRepository(groupID, artifactID);
@@ -104,11 +105,10 @@ public class GitHubService {
 //        }
 //        return null;
 //    }
-
     public InputStream downloadFileContent(String filePath, GHTag tag) throws TransferFailedException {
         return downloadFileContent(filePath, tag.getOwner(), tag);
     }
-    
+
     public InputStream downloadFileContent(String filePath, GHRepository repository, String tagName) throws TransferFailedException {
         try {
             GHTag tag = Iterables.getFirst(Iterables.filter(repository.listTags(), new Predicate<GHTag>() {
@@ -117,7 +117,7 @@ public class GitHubService {
                 public boolean apply(GHTag tag) {
                     return tagName.equals(tag.getName());
                 }
-                
+
             }), null);
             return downloadFileContent(filePath, repository, tag);
         } catch (IOException e) {
@@ -141,15 +141,13 @@ public class GitHubService {
 //    public InputStream downloadAsset(String fileName, Coordinates coordinates) throws TransferFailedException, ResourceDoesNotExistException {
 //        return downloadAsset(fileName, findRepositoryAndTag(coordinates).getSecond());
 //    }
-    
 //    public InputStream downloadFileContent(String filePath, Coordinates coordinates) throws TransferFailedException {
 //        return downloadFileContent(filePath, findRepositoryAndTag(coordinates).getSecond());
 //    }
-    
     public InputStream downloadAsset(String fileName, GHTag tag) throws TransferFailedException, ResourceDoesNotExistException {
         return downloadAsset(fileName, tag.getOwner(), tag);
     }
-    
+
     public InputStream downloadAsset(String filePath, GHRepository repository, GHTag tag) throws TransferFailedException, ResourceDoesNotExistException {
         try {
             PagedIterable<GHRelease> releases = repository.listReleases();

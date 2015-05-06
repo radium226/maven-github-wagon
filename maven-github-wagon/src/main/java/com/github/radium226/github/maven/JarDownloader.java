@@ -11,7 +11,7 @@ import org.kohsuke.github.GHTag;
 public class JarDownloader extends AbstractDownloader {
 
     public static final String RESOURCE_NAME_REGEX = "^com/github/[a-zA-Z0-9_-]+?/[a-zA-Z0-9_-]+?/.+?/.+" + Pattern.quote(".jar") + "$";
-    
+
     public JarDownloader() {
         super(RESOURCE_NAME_REGEX);
     }

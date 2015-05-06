@@ -11,7 +11,7 @@ public class Ok {
     public static InputStream download(OkHttpClient httpClient, String url) throws IOException {
         Request request = new Request.Builder()
                 .url(url)
-            .build();
+                .build();
         Response response = httpClient.newCall(request).execute();
         InputStream bodyInputStream = response.body().byteStream();
         return bodyInputStream;

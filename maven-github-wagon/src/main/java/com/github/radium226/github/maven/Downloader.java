@@ -6,11 +6,11 @@ import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
 
 public interface Downloader {
-   
+
     public Downloader with(GitHubService gitHubHelper);
-    
+
     public InputStream download(String resourceName) throws TransferFailedException, ResourceDoesNotExistException;
-    
+
     public boolean accept(String resourceName);
-    
+
 }

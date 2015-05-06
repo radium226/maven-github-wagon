@@ -11,27 +11,26 @@ public class Downloaders {
 
     private static List<Downloader> INSTANCES = ImmutableList.of(new JarDownloader(), new PomDownloader(), new MetaDataDownloader());
     private static final Logger LOGGER = LoggerFactory.getLogger(Downloaders.class);
-    
+
     private Downloaders() {
         super();
     }
-    
+
     public static Downloader of(String resourceName) throws ResourceDoesNotExistException {
-        Downloader downloader = null; 
+        Downloader downloader = null;
         for (Downloader instance : INSTANCES) {
             if (instance.accept(resourceName)) {
                 downloader = instance;
                 break;
             }
         }
-        
+
         if (downloader == null) {
             throw new ResourceDoesNotExistException("Nothing was found to download " + resourceName);
         }
-        
+
         LOGGER.debug("Using {} for {}", downloader.getClass().getName(), resourceName);
         return downloader;
     }
-    
-    
+
 }

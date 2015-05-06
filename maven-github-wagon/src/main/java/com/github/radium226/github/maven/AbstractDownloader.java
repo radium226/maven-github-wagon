@@ -19,12 +19,12 @@ public abstract class AbstractDownloader implements Downloader {
 
     private GitHubService gitHubService;
     private String resourceNameRegex;
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDownloader.class);
-    
+
     public AbstractDownloader(String resourceNameRegex) {
         super();
-        
+
         this.resourceNameRegex = resourceNameRegex;
     }
 
@@ -33,48 +33,48 @@ public abstract class AbstractDownloader implements Downloader {
         this.gitHubService = gitHubService;
         return this;
     }
-    
+
     protected GitHubService getGitHubService() {
         if (gitHubService == null) {
             throw new IllegalStateException("GitHubService should be provided");
         }
         return this.gitHubService;
     }
-    
+
     @Override
     public boolean accept(String resourceName) {
         boolean match = Pattern.matches(this.resourceNameRegex, resourceName);
         LOGGER.debug("Pattern.matches({}, {}) = {}", this.resourceNameRegex, resourceName, match);
         return match;
     }
-    
+
     protected abstract InputStream download(GHRepository repository, Optional<GHTag> tag, String fileName) throws TransferFailedException, ResourceDoesNotExistException;
-    
+
     @Override
     public InputStream download(String resourceName) throws TransferFailedException, ResourceDoesNotExistException {
         List<String> parts = Lists.newArrayList(Splitter.on("/").splitToList(resourceName));
         if (!Joiner.on(".").join(parts.subList(0, 2)).equals("com.github")) {
             throw new ResourceDoesNotExistException("The resource " + resourceName + " is not on GitHub");
         }
-        
-        parts.remove(0); 
+
         parts.remove(0);
-        
+        parts.remove(0);
+
         String groupID = "com.github" + parts.get(0);
         String artifactID = parts.get(1);
         parts.remove(0);
         parts.remove(0);
-        
+
         Optional<String> version = Optional.absent();
         if (parts.size() == 2) {
             version = Optional.of(parts.get(0));
             parts.remove(0);
         }
-        
+
         String fileName = parts.get(0);
-        
+
         Pair<GHRepository, Optional<GHTag>> repositoryAndTag = gitHubService.findRepositoryAndTag(groupID, artifactID, version);
         return download(repositoryAndTag.getFirst(), repositoryAndTag.getSecond(), fileName);
     }
-    
+
 }

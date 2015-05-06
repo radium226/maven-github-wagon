@@ -29,7 +29,7 @@ public class MetaDataDownloader extends AbstractDownloader {
 
     public static final String RESOURCE_NAME_REGEX = "^com/github/[a-zA-Z0-9_-]+?/[a-zA-Z0-9_-]+?/" + Pattern.quote("maven-metadata.xml") + "$";
     private static final Logger LOGGER = LoggerFactory.getLogger(MetaDataDownloader.class);
-    
+
     public MetaDataDownloader() {
         super(RESOURCE_NAME_REGEX);
     }
@@ -45,7 +45,7 @@ public class MetaDataDownloader extends AbstractDownloader {
         } catch (IOException e) {
             throw new TransferFailedException("Glup", e);
         }
-        
+
         StringBuilder metaData = new StringBuilder("<metadata>").append("\n");
         GHRelease lastRelease = releases.get(0);
         metaData.append("   <groupId>").append(extractGroupID(lastRelease)).append("</groupId>").append("\n");
@@ -61,7 +61,7 @@ public class MetaDataDownloader extends AbstractDownloader {
         metaData.append("</metadata>").append("\n");
 
         LOGGER.debug("metaData = {}", metaData.toString());
-        
+
         InputStream inputStream = new ByteArrayInputStream(metaData.toString().getBytes(Charsets.UTF_8));
         return inputStream;
     }
@@ -76,18 +76,18 @@ public class MetaDataDownloader extends AbstractDownloader {
                 if (prefix.equals("ns")) {
                     return "http://maven.apache.org/POM/4.0.0";
                 }
-                
-                return null; 
+
+                return null;
             }
 
             @Override
             public String getPrefix(String namespaceURI) {
-                return null; 
+                return null;
             }
 
             @Override
             public Iterator getPrefixes(String namespaceURI) {
-                return null; 
+                return null;
             }
         });
         XPathExpression xPathExpression = xPath.compile(expression);
@@ -102,7 +102,7 @@ public class MetaDataDownloader extends AbstractDownloader {
             throw new TransferFailedException("Youplaboum", e);
         }
     }
-    
+
     public String extractGroupID(GHRelease release) throws TransferFailedException {
         try (InputStream pomInputStream = getGitHubService().downloadFileContent("pom.xml", release.getOwner(), release.getTagName())) {
             return evaluateXPath(pomInputStream, "/ns:project/ns:groupId/text()");
@@ -110,7 +110,7 @@ public class MetaDataDownloader extends AbstractDownloader {
             throw new TransferFailedException("Youplaboum", e);
         }
     }
-    
+
     public String extractArtifactID(GHRelease release) throws TransferFailedException {
         try (InputStream pomInputStream = getGitHubService().downloadFileContent("pom.xml", release.getOwner(), release.getTagName())) {
             return evaluateXPath(pomInputStream, "/ns:project/ns:artifactId/text()");
