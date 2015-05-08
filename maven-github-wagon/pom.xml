@@ -36,7 +36,7 @@
     <scm>
         <url>https://github.com/radium226/maven-github-wagon</url>
         <connection>scm:git:git://github.com/radium226/maven-github-wagon.git</connection>
-        <developerConnection>scm:git:git@github.com/radium226/maven-github-wagon.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:radium226/maven-github-wagon.git</developerConnection>
         <tag>0.1</tag>
     </scm>
 
