@@ -21,7 +21,7 @@
 
     <groupId>com.github.radium226</groupId>
     <artifactId>maven-github-wagon</artifactId>
-    <version>0.1</version>
+    <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Maven GitHub Wagon</name>
@@ -33,19 +33,11 @@
         </license>
     </licenses>
     
-    <developers>
-        <developer>
-            <id>radium226</id>
-            <name>Radium226</name>
-            <url>https://github.com/radium226</url>
-        </developer>
-    </developers>
-    
     <scm>
         <url>https://github.com/radium226/maven-github-wagon</url>
         <connection>scm:git:git://github.com/radium226/maven-github-wagon.git</connection>
         <developerConnection>scm:git:git@github.com/radium226/maven-github-wagon.git</developerConnection>
-        <tag>0.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <prerequisites>
