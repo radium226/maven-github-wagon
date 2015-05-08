@@ -1,7 +1,14 @@
 # Maven Wagon for GitHub
 
+## Purpose
 This wagon allow the use of project release on GitHub as depdendency. 
 
+## Installation
+```
+wget "https://github.com/radium226/maven-github-wagon/releases/download/0.1/maven-github-wagon-0.1.jar" && mvn install:install-file -Dfile="maven-github-wagon-0.1.jar"
+```
+
+## Usage
 You should add in the `pom.xml` file:
 ```
 ...
@@ -43,3 +50,6 @@ And in your `settings.xml` file:
   </server>
 </servers>
 ```
+
+# Limitations
+The GitHub repository must be closely related to the `groupId`
