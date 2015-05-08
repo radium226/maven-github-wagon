@@ -185,6 +185,7 @@
                         <configuration>
                             <releaseName>${project.version}</releaseName>
                             <tag>${project.scm.tag}</tag>
+                            <repositoryId>radium226/${artifactId}</repositoryId>
                         </configuration>
                     </execution>
                 </executions>
