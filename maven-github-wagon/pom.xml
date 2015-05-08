@@ -182,11 +182,20 @@
                 <groupId>de.jutzig</groupId>
                 <artifactId>github-release-plugin</artifactId>
                 <version>1.1.1</version>
-                <configuration>
-                    <serverId>github.com</serverId>
-                    <releaseName>${project.version}</releaseName>
-                    <tag>${project.version}</tag>
-                </configuration>
+                <executions>
+                    <execution>
+                        <id>github</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>release</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <releaseName>${project.version}</releaseName>
+                            <tag>${project.version}</tag>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
