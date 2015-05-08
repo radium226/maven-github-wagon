@@ -58,6 +58,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        
+        <!-- Workaround -->
+        <workaround.builddir>${project.build.directory}</workaround.builddir>
     </properties>
 
     <dependencies>
@@ -174,11 +177,11 @@
                 <groupId>de.jutzig</groupId>
                 <artifactId>github-release-plugin</artifactId>
                 <version>1.1.1</version>
-                <inherited>false</inherited>
                 <configuration>
                     <releaseName>${project.version}</releaseName>
                     <tag>${project.scm.tag}</tag>
                     <repositoryId>radium226/${project.artifactId}</repositoryId>
+                    <artifact>${workaround.builddir}/${project.artifactId}-${project.version}.${project.packaging}</artifact>
                 </configuration>
             </plugin>
             <plugin>
