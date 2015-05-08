@@ -178,7 +178,6 @@
                     <releaseName>${project.version}</releaseName>
                     <tag>${project.scm.tag}</tag>
                     <repositoryId>radium226/${project.artifactId}</repositoryId>
-                    <artifact>${basedir}/target/${project.build.finalName}.${project.packaging}</artifact>
                 </configuration>
             </plugin>
             <plugin>
