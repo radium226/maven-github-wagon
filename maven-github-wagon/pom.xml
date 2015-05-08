@@ -21,7 +21,7 @@
 
     <groupId>com.github.radium226</groupId>
     <artifactId>maven-github-wagon</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
     <packaging>jar</packaging>
 
     <name>Maven GitHub Wagon</name>
