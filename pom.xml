@@ -178,7 +178,7 @@
                     <releaseName>${project.version}</releaseName>
                     <tag>${project.scm.tag}</tag>
                     <repositoryId>radium226/${project.artifactId}</repositoryId>
-                    <artifact>${project.build.directory}/${project.build.finalName}</artifact>
+                    <artifact>${project.build.directory}/../../${project.build.finalName}.${project.packaging}</artifact>
                 </configuration>
             </plugin>
             <plugin>
