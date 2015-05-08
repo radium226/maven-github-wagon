@@ -195,6 +195,7 @@
                 <version>2.5.1</version>
                 <configuration>
                     <tagNameFormat>@{project.version}</tagNameFormat>
+                    <goals>deploy de.jutzig:github-release-plugin:1.1.1:release</goals>
                 </configuration>
             </plugin>
         </plugins>
