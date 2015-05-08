@@ -21,7 +21,7 @@
 
     <groupId>com.github.radium226</groupId>
     <artifactId>maven-github-wagon</artifactId>
-    <version>0.1</version>
+    <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Maven GitHub Wagon</name>
@@ -43,9 +43,9 @@
     
     <scm>
         <url>https://github.com/radium226/maven-github-wagon</url>
-        <connection>scm:git:https://github.com:radium226/maven-github-wagon.git</connection>
-        <developerConnection>scm:git:https://github.com:radium226/maven-github-wagon.git</developerConnection>
-        <tag>maven-github-wagon-0.1</tag>
+        <connection>scm:git:git://github.com/radium226/maven-github-wagon.git</connection>
+        <developerConnection>scm:git:git@github.com:radium226/maven-github-wagon.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
 
     <prerequisites>
@@ -202,7 +202,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
-                    <goals>package de.jutzig:github-release-plugin:1.1.1:release</goals>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
         </plugins>
