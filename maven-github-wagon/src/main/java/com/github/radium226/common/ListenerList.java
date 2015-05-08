@@ -1,3 +1,18 @@
+/**
+ *    Copyright 2015 Radium226
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.github.radium226.common;
 
 import java.lang.reflect.InvocationTargetException;
@@ -8,16 +23,15 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-public class ListenerList<T> {
+public final class ListenerList<T> {
 
     final private static Logger LOGGER = LoggerFactory.getLogger(ListenerList.class);
 
-    private Set<T> listeners = Sets.newHashSet();
-    private Class<T> listenerClass;
+    private final Set<T> listeners = Sets.newHashSet();
+    private final Class<T> listenerClass;
 
     private ListenerList(Class<T> listenerClass) {
         super();
@@ -26,7 +40,7 @@ public class ListenerList<T> {
     }
 
     public static <T> ListenerList<T> of(Class<T> listenerClass) {
-        return new ListenerList<T>(listenerClass);
+        return new ListenerList<>(listenerClass);
     }
 
     public boolean add(T listener) {
@@ -44,26 +58,13 @@ public class ListenerList<T> {
     public void fire(String methodName, Object... parameters) {
         for (T listener : listeners) {
             try {
-                Class<?>[] parameterTypes = Lists.transform(Arrays.asList(parameters), new Function<Object, Class<?>>() {
-
-                    @Override
-                    public Class<?> apply(Object parameter) {
-                        Class<?> type = parameter.getClass();
-                        return type;
-                    }
-
+                Class<?>[] parameterTypes = Lists.transform(Arrays.asList(parameters), (Object parameter) -> {
+                    Class<?> type = parameter.getClass();
+                    return type;
                 }).toArray(new Class<?>[0]);
                 Method method = listenerClass.getMethod(methodName, parameterTypes);
                 method.invoke(listener, parameters);
-            } catch (IllegalAccessException e) {
-                LOGGER.warn("Unable to invoke {}", methodName, e);
-            } catch (SecurityException e) {
-                LOGGER.warn("Unable to invoke {}", methodName, e);
-            } catch (NoSuchMethodException e) {
-                LOGGER.warn("Unable to invoke {}", methodName, e);
-            } catch (IllegalArgumentException e) {
-                LOGGER.warn("Unable to invoke {}", methodName, e);
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | SecurityException | NoSuchMethodException | IllegalArgumentException | InvocationTargetException e) {
                 LOGGER.warn("Unable to invoke {}", methodName, e);
             }
         }

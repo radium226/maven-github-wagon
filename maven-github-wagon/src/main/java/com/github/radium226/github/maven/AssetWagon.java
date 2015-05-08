@@ -1,3 +1,18 @@
+/**
+ *    Copyright 2015 Radium226
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.github.radium226.github.maven;
 
 import java.io.File;
@@ -40,18 +55,8 @@ public class AssetWagon extends AbstractWagon {
     private GitHub gitHub;
     private OkHttpClient okHttpClient;
 
-    private String coucou;
-
     public AssetWagon() {
         super();
-    }
-
-    public String getCoucou() {
-        return coucou;
-    }
-
-    public void setCoucou(String coucou) {
-        this.coucou = coucou;
     }
 
     @Override
@@ -122,7 +127,7 @@ public class AssetWagon extends AbstractWagon {
             throw new ResourceDoesNotExistException("There is no " + resourceName + " on GitHub");
         }
 
-        return Downloaders.of(resourceName).with(this.gitHubService).download(resourceName);
+        return Downloader.forResource(resourceName).with(this.gitHubService).download(resourceName);
     }
 
     @Override
