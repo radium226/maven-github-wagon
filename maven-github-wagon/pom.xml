@@ -184,7 +184,7 @@
                         <inherited>false</inherited>
                         <configuration>
                             <releaseName>${project.version}</releaseName>
-                            <tag>${scm.tag}</tag>
+                            <tag>${project.scm.tag}</tag>
                         </configuration>
                     </execution>
                 </executions>
