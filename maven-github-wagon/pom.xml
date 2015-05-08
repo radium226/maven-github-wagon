@@ -174,12 +174,16 @@
                 <groupId>de.jutzig</groupId>
                 <artifactId>github-release-plugin</artifactId>
                 <version>1.1.1</version>
-                <configuration>
-                    <releaseName>${project.version}</releaseName>
-                    <tag>${project.scm.tag}</tag>
-                    <repositoryId>radium226/${artifactId}</repositoryId>
-                </configuration>
-            </executions>
+                <executions>
+                    <execution>
+                        <id>github</id>
+                        <configuration>
+                            <releaseName>${project.version}</releaseName>
+                            <tag>${project.scm.tag}</tag>
+                            <repositoryId>radium226/${artifactId}</repositoryId>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
