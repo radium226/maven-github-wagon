@@ -1,11 +1,15 @@
 # Maven Wagon for GitHub
 
 ## Purpose
-This wagon allow the use of project release on GitHub as depdendency. 
+This project can be used in order to use the GitHub Release functionnality as a Maven repository. It's also compatible with the `mvn versions:display-dependency-updates`. 
 
 ## Installation
 ```
-wget "https://github.com/radium226/maven-github-wagon/releases/download/0.1/maven-github-wagon-0.1.jar" && mvn install:install-file -Dfile="maven-github-wagon-0.1.jar"
+cd "$( mktemp --directory )"
+wget "https://github.com/radium226/maven-github-wagon/archive/0.1.tar.gz"
+tar -xf "0.1.tar.gz"
+mvn --file="maven-github-wagon-0.1/pom.xml" install
+cd -
 ```
 
 ## Usage
@@ -15,14 +19,14 @@ You should add in the `pom.xml` file:
 <repositories>
     <repository>
         <id>github</id>
-        <url>github://.m2/repository</url> <!-- Only needed to trigger the wagon: we need to put something because an empty text causes a NullPointerException -->
+        <url>github://.m2/repository</url> <!-- Only needed to trigger the wagon: we need to put something because an empty text after github:// causes a NullPointerException -->
         <releases>
             <enabled>true</enabled>
-            <checksumPolicy>ignore</checksumPolicy>
+            <checksumPolicy>ignore</checksumPolicy> <!-- We can extract it from the Release API but only for the JAR (not for the pom.xml) so let's ignore it for the moment -->
         </releases>
         <snapshots>
             <enabled>true</enabled>
-            <checksumPolicy>ignore</checksumPolicy>
+            <checksumPolicy>ignore</checksumPolicy> <!-- Ditto -->
         </snapshots>
     </repository>
 </repositories>
@@ -52,4 +56,4 @@ And in your `settings.xml` file:
 ```
 
 # Limitations
-The GitHub repository must be closely related to the `groupId`
+The `groupId` of the artifact should be `com.github.<GitHub User>` and the `ærtifactId` should be the same as the GitHub repository name. The `version` should be the same as the GitHub release tag.
