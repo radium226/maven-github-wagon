@@ -59,7 +59,7 @@ You can also add an `http` proxy in your `settings.xml` if needed.
 
 # Limitations
 * Pretty strict conventions to follow:
-** The `groupId` of the artifact should be `com.github.<GitHub User>` 
-** The `ærtifactId` should be the same as the GitHub repository name
-** The `version` should be the same as the GitHub release tag
+ * The `groupId` of the artifact should be `com.github.<GitHub User>` 
+ * The `artifactId` should be the same as the GitHub repository name
+ * The `version` should be the same as the GitHub release tag
 * I'm not sure that it works with Maven plugins (but I just need to try it)
