@@ -55,6 +55,8 @@ And in your `settings.xml` file:
 </servers>
 ```
 
+You can also add an `http` proxy in your `settings.xml` if needed. 
+
 # Limitations
 * Pretty strict conventions to follow:
 ** The `groupId` of the artifact should be `com.github.<GitHub User>` 
