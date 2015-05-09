@@ -56,4 +56,8 @@ And in your `settings.xml` file:
 ```
 
 # Limitations
-The `groupId` of the artifact should be `com.github.<GitHub User>` and the `ærtifactId` should be the same as the GitHub repository name. The `version` should be the same as the GitHub release tag.
+* Pretty strict conventions to follow:
+** The `groupId` of the artifact should be `com.github.<GitHub User>` 
+** The `ærtifactId` should be the same as the GitHub repository name
+** The `version` should be the same as the GitHub release tag
+* I'm not sure that it works with Maven plugins (but I just need to try it)
