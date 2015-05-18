@@ -1,4 +1,4 @@
-# Maven Wagon for GitHub
+# Maven Wagon for GitHub ![alt text](https://img.shields.io/travis/radium226/maven-github-wagon.svg "Travis-CI")
 
 ## Purpose
 This project can be used in order to use the GitHub Release functionnality as a Maven repository. It's also compatible with the `mvn versions:display-dependency-updates`. 
