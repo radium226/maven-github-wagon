@@ -9,4 +9,4 @@ env:
 
 install: mvn --batch-mode install -DskipTests
 
-test: mvn --batch-mode test
+script: mvn --batch-mode test
