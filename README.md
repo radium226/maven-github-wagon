@@ -1,4 +1,4 @@
-# Maven Wagon for GitHub
+# Maven Wagon for GitHub [![Build Status](https://travis-ci.org/radium226/maven-github-wagon.svg?branch=master)](https://travis-ci.org/radium226/maven-github-wagon) [![Dependency Status](https://www.versioneye.com/user/projects/554dd9c98a8e5655d600008e/badge.svg?style=flat)](https://www.versioneye.com/user/projects/554dd9c98a8e5655d600008e)
 
 ## Purpose
 This project can be used in order to use the GitHub Release functionnality as a Maven repository. It's also compatible with the `mvn versions:display-dependency-updates`. 
