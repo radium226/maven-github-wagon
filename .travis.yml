@@ -7,6 +7,6 @@ env:
   global:
     secure: VoniDGWLuKFJkuZg3RknhdH3Usd7WtA5MxokNzQ4ykJwL+u6sQnD0in3Y13vOTrSZ25WDdQ1mjlgYzJTLEpkk6FkQ2o+Rr+Oi1XyFlP7M1sZ6YBEo8J+wgtf2u//0W6H5Tr30y/Z4paKQ3a/qg/9xZrAgdNly8S1OptJyMvkAgU=
 
-install: mvn --batch-mode install -DskipTests
+install: mvn --batch-mode --errors --debug  install -DskipTests
 
-script: mvn --batch-mode test
+script: mvn --batch-mode --errors --debug test
