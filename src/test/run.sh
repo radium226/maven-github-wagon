@@ -18,7 +18,7 @@
 
 export MAVEN="$( which 'mvn' )"
 export MAVEN_OPTIONS='--batch-mode --settings "settings.xml" --update-snapshots'
-export GITHUB_OAUTH2_TOKEN="62348150912e4f48c4216e141fa2a39dea046636"
+
 set -e
 declare version="${1}"
 declare skip_test="${2}"

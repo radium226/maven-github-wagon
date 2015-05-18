@@ -225,7 +225,7 @@
                     <executable>src/test/run.sh</executable>
                     <arguments>
                         <argument>${project.version}</argument>
-                        <argument>${skip.test}</argument>
+                        <argument>${skipTests}</argument>
                     </arguments>
                 </configuration>
             </plugin>
@@ -237,11 +237,11 @@
         <profile>
             <activation>
                 <property>
-                    <name>!skip.test</name>
+                    <name>!skipTests</name>
                 </property>
             </activation>
             <properties>
-                <skip.test>false</skip.test>
+                <skipTests>false</skipTests>
             </properties>
         </profile>
     </profiles>
