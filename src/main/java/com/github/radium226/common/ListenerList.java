@@ -15,6 +15,7 @@
  */
 package com.github.radium226.common;
 
+import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -25,9 +26,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.primitives.Primitives;
+import java.util.Map;
 
 public final class ListenerList<T> {
-
+    
     final private static Logger LOGGER = LoggerFactory.getLogger(ListenerList.class);
 
     private final Set<T> listeners = Sets.newHashSet();
@@ -60,7 +63,7 @@ public final class ListenerList<T> {
             try {
                 Class<?>[] parameterTypes = Lists.transform(Arrays.asList(parameters), (Object parameter) -> {
                     Class<?> type = parameter.getClass();
-                    return type;
+                    return Primitives.isWrapperType(type) ? Primitives.unwrap(type) : type;
                 }).toArray(new Class<?>[0]);
                 Method method = listenerClass.getMethod(methodName, parameterTypes);
                 method.invoke(listener, parameters);

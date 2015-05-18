@@ -13,3 +13,4 @@ hs_err_pid*
 /dummy/target/
 /maven-github-wagon/target/
 settings.xml
+/src/test/dummy/target/
